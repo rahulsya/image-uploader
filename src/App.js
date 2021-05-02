@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
-
+// import { useState,useCallback} from "react";
+import firebase from "./firebase";
 function App() {
+  // const [file, setFile] = useState([]);
+
+  const onChange = (e) => {
+    const imageFile = e.target.files[0];
+    const storageRef = firebase.storage().ref();
+    storageRef
+      .child(`images/${imageFile.name}`)
+      .put(imageFile, imageFile.type)
+      .on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`upload progress ${progress} %`);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <input type="file" name="image" id="" onChange={onChange} />
+      {/* <p>{file.name}</p> */}
     </div>
   );
 }
